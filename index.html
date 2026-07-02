@@ -233,6 +233,15 @@
     border-radius: 3px;
     font-size: 0.75rem;
   }
+  .person-card .tag.heimu-tag {
+    background: #1a1a1a;
+    color: #1a1a1a;
+    cursor: default;
+    transition: color 0.25s;
+  }
+  .person-card .tag.heimu-tag:hover {
+    color: #c0c0c0;
+  }
 
   /* ===== Modal / Detail View ===== */
   .modal-overlay {
@@ -409,7 +418,7 @@
 
 <script>
 // ===== 赛博墓地数据（内嵌，无需外部请求） =====
-const GRAVEYARD_DATA = {"people":[{"name":"灵魂沙沙","昵称":"灵魂沙沙","外号":"灵魂莎莎，莎莎，沙沙，<span class=\"heimu\" title=\"你知道的太多了\">灵魂煞笔</span>","QQ":"2088787829","性别":"男","学历":"博士在读","来源":"原初神人","tags":["对立话题爱好者","极度性压抑","贱嘴","疑似女装满足自己性欲"],"deeds":[{"title":"造女群友黄谣","description":"无中生有，恶意中伤女群友"},{"title":"对立话题爱好者","description":"积极参与包括但不限于男女对立、多元性别对立等各类对立话题"},{"title":"男性沙文主义","description":"喜好高高在上对群友指指点点"},{"title":"言行不一","description":"嘴上抨击LGBT，<span class=\"heimu\" title=\"疑似通过女装满足自己的性欲\">实际上穿女装满足自己的性压抑</span>"}],"media":["media/QQ资料截图.jpg"],"dir":"灵魂沙沙"}],"sources":{"原初神人":["灵魂沙沙"]}};
+const GRAVEYARD_DATA = {"people":[{"name":"灵魂沙沙","昵称":"灵魂沙沙","外号":"灵魂莎莎，莎莎，沙沙，<span class=\"heimu\" title=\"你知道的太多了\">灵魂煞笔</span>","QQ":"2088787829","性别":"男","学历":"博士在读","来源":"原初神人","tags":["对立话题爱好者","极度性压抑","贱嘴"],"heimu_tags":[{"text":"疑似女装满足自己性欲","title":"疑似通过女装满足自己的性欲"}],"deeds":[{"title":"造女群友黄谣","description":"无中生有，恶意中伤女群友"},{"title":"对立话题爱好者","description":"积极参与包括但不限于男女对立、多元性别对立等各类对立话题"},{"title":"男性沙文主义","description":"喜好高高在上对群友指指点点"},{"title":"言行不一","description":"嘴上抨击LGBT，<span class=\"heimu\" title=\"疑似通过女装满足自己的性欲\">实际上穿女装满足自己的性压抑</span>"}],"media":["media/QQ资料截图.jpg"],"dir":"灵魂沙沙"}],"sources":{"原初神人":["灵魂沙沙"]}};
 
 let DATA = GRAVEYARD_DATA;
 
@@ -486,6 +495,7 @@ function render(searchTerm) {
                 ${aliases.length ? `<div class="aliases">${renderAliases(aliases)}</div>` : ''}
                 <div class="tags">
                   ${tags.slice(0, 4).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
+                  ${(p.heimu_tags || []).map(h => `<span class="tag heimu-tag" title="${h.title}">${h.text}</span>`).join('')}
                 </div>
               </div>
             `;
@@ -554,6 +564,7 @@ function showDetail(name) {
       <div class="section-title">🏷️ 标签</div>
       <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;">
         ${tags.map(t => `<span class="tag" style="background:#1a0a0a;color:#8b0000;padding:2px 8px;border-radius:3px;font-size:0.8rem;">${escapeHtml(t)}</span>`).join('')}
+        ${(p.heimu_tags || []).map(h => `<span class="heimu" style="padding:2px 8px;border-radius:3px;font-size:0.8rem;display:inline-block;" title="${h.title}">${h.text}</span>`).join('')}
       </div>
     ` : ''}
 
