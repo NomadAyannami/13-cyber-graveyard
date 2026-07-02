@@ -418,7 +418,38 @@
 
 <script>
 // ===== 赛博墓地数据（内嵌，无需外部请求） =====
-const GRAVEYARD_DATA = {"people":[{"name":"灵魂沙沙","昵称":"灵魂沙沙","外号":"灵魂莎莎，莎莎，沙沙，<span class=\"heimu\" title=\"你知道的太多了\">灵魂煞笔</span>","QQ":"2088787829","性别":"男","学历":"博士在读","来源":"原初神人","tags":["对立话题爱好者","极度性压抑","贱嘴"],"heimu_tags":[{"text":"疑似女装满足自己性欲","title":"疑似通过女装满足自己的性欲"}],"deeds":[{"title":"造女群友黄谣","description":"无中生有，恶意中伤女群友"},{"title":"对立话题爱好者","description":"积极参与包括但不限于男女对立、多元性别对立等各类对立话题"},{"title":"男性沙文主义","description":"喜好高高在上对群友指指点点"},{"title":"言行不一","description":"嘴上抨击LGBT，<span class=\"heimu\" title=\"疑似通过女装满足自己的性欲\">实际上穿女装满足自己的性压抑</span>"}],"media":["media/QQ资料截图.jpg"],"dir":"灵魂沙沙"}],"sources":{"原初神人":["灵魂沙沙"]}};
+const GRAVEYARD_DATA = {
+  "people": [{
+    "name": "灵魂沙沙",
+    "QQ": "2088787829",
+    "gender": "男",
+    "education": "博士在读",
+    "source": "原初神人",
+    "aliases": [
+      { "text": "灵魂莎莎", "isHeimu": false },
+      { "text": "莎莎", "isHeimu": false },
+      { "text": "沙沙", "isHeimu": false },
+      { "text": "灵魂煞笔", "isHeimu": true, "title": "你知道的太多了" }
+    ],
+    "tags": ["对立话题爱好者", "极度性压抑", "贱嘴"],
+    "heimuTags": [{ "text": "疑似女装满足自己性欲", "title": "疑似通过女装满足自己的性欲" }],
+    "deeds": [
+      { "title": "造女群友黄谣", "desc": "无中生有，恶意中伤女群友" },
+      { "title": "对立话题爱好者", "desc": "积极参与包括但不限于男女对立、多元性别对立等各类对立话题" },
+      { "title": "男性沙文主义", "desc": "喜好高高在上对群友指指点点" },
+      {
+        "title": "言行不一",
+        "desc": "嘴上抨击LGBT，",
+        "heimuSuffix": { "text": "实际上穿女装满足自己的性压抑", "title": "疑似通过女装满足自己的性欲" }
+      }
+    ],
+    "media": [],
+    "dir": "灵魂沙沙"
+  }],
+  "sources": { "原初神人": ["灵魂沙沙"] }
+};
+
+let DATA = GRAVEYARD_DATA;
 
 let DATA = GRAVEYARD_DATA;
 
@@ -443,7 +474,7 @@ function render(searchTerm) {
       // 搜索昵称
       if (p.name.toLowerCase().includes(term)) return true;
       // 搜索外号
-      if (p.外号 && p.外号.toLowerCase().includes(term)) return true;
+      if (p.aliases && p.aliases.some(a => a.text.toLowerCase().includes(term))) return true;
       // 搜索QQ
       if (p.QQ && p.QQ.includes(term)) return true;
       return false;
@@ -487,7 +518,7 @@ function render(searchTerm) {
           ${persons.map(name => {
             const p = DATA.people.find(p => p.name === name);
             if (!p) return '';
-            const aliases = (p.外号 || '').split(/[,，]/).map(s => s.trim()).filter(Boolean);
+            const aliases = p.aliases || [];
             const tags = p.tags || [];
             return `
               <div class="person-card" onclick="showDetail('${escapeHtml(name)}')">
@@ -495,7 +526,7 @@ function render(searchTerm) {
                 ${aliases.length ? `<div class="aliases">${renderAliases(aliases)}</div>` : ''}
                 <div class="tags">
                   ${tags.slice(0, 4).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
-                  ${(p.heimu_tags || []).map(h => `<span class="tag heimu-tag" title="${h.title}">${h.text}</span>`).join('')}
+                  ${(p.heimuTags || []).map(h => `<span class="tag heimu-tag" title="${h.title}">${h.text}</span>`).join('')}
                 </div>
               </div>
             `;
@@ -509,10 +540,10 @@ function render(searchTerm) {
 
 function renderAliases(aliases) {
   return aliases.map(a => {
-    if (a.includes('灵魂煞笔')) {
-      return `<span class="heimu" title="你知道的太多了">灵魂煞笔</span>`;
+    if (a.isHeimu) {
+      return `<span class="heimu" title="${a.title}">${a.text}</span>`;
     }
-    return escapeHtml(a);
+    return escapeHtml(a.text);
   }).join(' · ');
 }
 
@@ -525,12 +556,12 @@ function showDetail(name) {
 
   const fields = [
     ['QQ', p.QQ],
-    ['性别', p.性别],
-    ['学历', p.学历],
-    ['来源', p.来源],
+    ['性别', p.gender],
+    ['学历', p.education],
+    ['来源', p.source],
   ].filter(([, v]) => v);
 
-  const aliases = (p.外号 || '').split(/[,，]/).map(s => s.trim()).filter(Boolean);
+  const aliases = p.aliases || [];
   const tags = p.tags || [];
   const deeds = p.deeds || [];
   const media = p.media || [];
@@ -538,8 +569,11 @@ function showDetail(name) {
   const deedsHtml = deeds.length ? `
     <div class="section-title">⚔️ 事迹</div>
     ${deeds.map(d => {
-      const desc = d.description.replace(/<span[^>]*>/, '').replace('</span>', '');
-      return `<div class="deed-item"><strong>${escapeHtml(d.title)}</strong> — ${desc}</div>`;
+      let descHtml = escapeHtml(d.desc);
+      if (d.heimuSuffix) {
+        descHtml += ` <span class="heimu" title="${d.heimuSuffix.title}">${d.heimuSuffix.text}</span>`;
+      }
+      return `<div class="deed-item"><strong>${escapeHtml(d.title)}</strong> — ${descHtml}</div>`;
     }).join('')}
   ` : '';
 
@@ -552,19 +586,19 @@ function showDetail(name) {
 
   content.innerHTML = `
     <h2>${escapeHtml(name)}</h2>
-    <div class="meta">${escapeHtml(p.外号 || '(无外号)')}</div>
+    <div class="meta">${renderAliases(aliases)}</div>
 
     <table class="info-table">
       ${fields.map(([k, v]) =>
-        `<tr><td>${escapeHtml(k)}</td><td>${formatValue(v)}</td></tr>`
+        `<tr><td>${escapeHtml(k)}</td><td>${escapeHtml(v)}</td></tr>`
       ).join('')}
     </table>
 
-    ${tags.length ? `
+    ${(tags.length || (p.heimuTags && p.heimuTags.length)) ? `
       <div class="section-title">🏷️ 标签</div>
       <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;">
         ${tags.map(t => `<span class="tag" style="background:#1a0a0a;color:#8b0000;padding:2px 8px;border-radius:3px;font-size:0.8rem;">${escapeHtml(t)}</span>`).join('')}
-        ${(p.heimu_tags || []).map(h => `<span class="heimu" style="padding:2px 8px;border-radius:3px;font-size:0.8rem;display:inline-block;" title="${h.title}">${h.text}</span>`).join('')}
+        ${(p.heimuTags || []).map(h => `<span class="heimu" style="padding:2px 8px;border-radius:3px;font-size:0.8rem;display:inline-block;" title="${h.title}">${h.text}</span>`).join('')}
       </div>
     ` : ''}
 
@@ -585,14 +619,6 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
-}
-
-function formatValue(v) {
-  // 处理 heimu span
-  if (v.includes('灵魂煞笔')) {
-    return v.replace(/<span[^>]*>灵魂煞笔<\/span>/, '<span class="heimu" title="你知道的太多了">灵魂煞笔</span>');
-  }
-  return v;
 }
 
 // ===== 搜索监听 =====
