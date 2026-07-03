@@ -264,7 +264,7 @@
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
-    padding: 30px;
+    padding: 30px 80px 30px 30px;
     position: relative;
   }
   .modal-close {
@@ -432,8 +432,8 @@
   /* ===== 鞭尸面板 ===== */
   .whipping-panel {
     position: absolute;
-    right: -56px;
-    top: 80px;
+    right: 12px;
+    top: 90px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -443,8 +443,8 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    border: 1px solid #3a1212;
-    background: #0d0d0d;
+    border: 1px solid #5a1a1a;
+    background: linear-gradient(145deg, #151010 0%, #0a0505 100%);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -452,11 +452,13 @@
     font-size: 1.4rem;
     transition: all 0.3s;
     position: relative;
+    box-shadow: 0 0 8px rgba(139,0,0,0.15), inset 0 0 4px rgba(0,0,0,0.5);
   }
   .whip-btn:hover {
-    border-color: #8b0000;
-    box-shadow: 0 0 15px rgba(139,0,0,0.4);
-    transform: scale(1.1);
+    border-color: #ff3333;
+    box-shadow: 0 0 20px rgba(139,0,0,0.6), inset 0 0 8px rgba(139,0,0,0.1);
+    transform: scale(1.15);
+    background: linear-gradient(145deg, #1a0a0a 0%, #0d0505 100%);
   }
   .whip-btn:active { transform: scale(0.95); }
   .whip-btn::after {
@@ -625,8 +627,8 @@
     .search-section { flex-direction: column; gap: 8px; }
     .search-hint { white-space: normal; font-size: 0.75rem; }
     .categories { grid-template-columns: 1fr; }
-    .modal { padding: 20px; }
-    .whipping-panel { right: -44px; gap: 6px; }
+    .modal { padding: 20px 60px 20px 20px; }
+    .whipping-panel { right: 8px; top: 70px; gap: 6px; }
     .whip-btn { width: 34px; height: 34px; font-size: 1.1rem; }
     .whip-btn::after { display: none; }
     .category-body { max-height: 300px; }
