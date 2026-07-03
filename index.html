@@ -461,6 +461,8 @@
     background: linear-gradient(145deg, #1a0a0a 0%, #0d0505 100%);
   }
   .whip-btn:active { transform: scale(0.95); }
+  .whip-btn svg { transition: all 0.3s; }
+  .whip-btn:hover svg { filter: drop-shadow(0 0 4px rgba(255,50,50,0.8)); }
   .whip-btn::after {
     content: attr(data-tip);
     position: absolute;
@@ -488,124 +490,199 @@
     border-radius: 10px;
   }
 
-  /* --- 扔鸡蛋动画 --- */
-  .egg {
+  /* --- 扔臭鸡蛋动画 --- */
+  .rotten-egg {
     position: absolute;
-    font-size: 2rem;
-    animation: eggFly 0.8s ease-in forwards;
+    font-size: 2.6rem;
     pointer-events: none;
+    z-index: 30;
+    filter: hue-rotate(60deg) saturate(1.5);
+    animation: eggArc 0.7s cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
   }
-  @keyframes eggFly {
-    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-    20% { transform: translate(-120px, -60px) rotate(90deg); opacity: 1; }
-    40% { transform: translate(-220px, -30px) rotate(180deg); opacity: 1; }
-    60% { transform: translate(-280px, 40px) rotate(270deg); opacity: 1; }
-    75% { transform: translate(-310px, 80px) rotate(340deg); opacity: 1; }
-    85% { transform: translate(-310px, 90px) rotate(360deg); opacity: 0.8; }
-    100% { transform: translate(-310px, 90px) rotate(360deg); opacity: 0; }
+  @keyframes eggArc {
+    0%   { right: -60px; top: -60px; transform: rotate(0deg) scale(0.6); opacity: 1; }
+    15%  { right: 80px;  top: 20px;  transform: rotate(80deg) scale(0.8); opacity: 1; }
+    40%  { right: 180px; top: 80px;  transform: rotate(200deg) scale(1); opacity: 1; }
+    70%  { right: 260px; top: 130px; transform: rotate(340deg) scale(1.1); opacity: 1; }
+    85%  { right: 280px; top: 140px; transform: rotate(400deg) scale(0.9); opacity: 0.9; }
+    100% { right: 290px; top: 145px; transform: rotate(450deg) scale(0.3); opacity: 0; }
   }
-  .egg-splat {
+  /* 臭气缭绕 */
+  .stink-wisp {
     position: absolute;
-    width: 80px;
-    height: 80px;
+    pointer-events: none;
+    z-index: 28;
+  }
+  .stink-wisp::after {
+    content: '💨';
+    font-size: 1.2rem;
+    display: block;
+    opacity: 0;
+    animation: stinkRise 1.2s ease-out forwards;
+    filter: hue-rotate(100deg) brightness(0.7);
+  }
+  @keyframes stinkRise {
+    0%   { transform: translateY(0) scale(0.5); opacity: 0.6; }
+    50%  { transform: translateY(-30px) scale(1.2); opacity: 0.8; }
+    100% { transform: translateY(-60px) scale(1.8); opacity: 0; }
+  }
+  /* 蛋黄滩 */
+  .yolk-pool {
+    position: absolute;
+    pointer-events: none;
+    z-index: 28;
+    width: 100px;
+    height: 70px;
+    background: radial-gradient(ellipse at center,
+      rgba(255, 200, 30, 0.95) 0%,
+      rgba(255, 180, 20, 0.8) 25%,
+      rgba(220, 150, 10, 0.5) 50%,
+      rgba(180, 130, 10, 0.15) 75%,
+      transparent 100%
+    );
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,240,180,0.9) 0%, rgba(255,220,100,0.6) 30%, rgba(200,160,30,0.2) 60%, transparent 100%);
-    animation: splat 1s ease-out forwards;
-    pointer-events: none;
+    animation: yolkSpread 1.5s ease-out forwards;
   }
-  .egg-splat::before {
+  .yolk-pool::before {
     content: '';
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 20px;
+    background: rgba(255, 240, 200, 0.9);
     border-radius: 50%;
-    background: rgba(255,230,100,0.8);
-    top: 25px;
-    left: 25px;
-    animation: yolk 1s ease-out forwards;
+    top: 20px;
+    left: 30px;
+    animation: yolkHighlight 1.5s ease-out forwards;
   }
-  .egg-splat::after {
-    content: '';
+  @keyframes yolkSpread {
+    0%   { transform: scale(0); opacity: 0; }
+    30%  { transform: scale(1.2); opacity: 1; }
+    50%  { transform: scale(1.5); opacity: 0.9; }
+    80%  { transform: scale(1.7); opacity: 0.6; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  @keyframes yolkHighlight {
+    0%   { transform: scale(0); }
+    50%  { transform: scale(1.2); }
+    100% { transform: scale(0.8); opacity: 0; }
+  }
+  /* 蛋清飞溅 */
+  .egg-white-drop {
     position: absolute;
+    pointer-events: none;
+    z-index: 28;
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: rgba(255,200,50,0.9);
-    top: 34px;
-    left: 34px;
-    animation: yolk 1s ease-out forwards;
+    background: rgba(255, 250, 240, 0.85);
+    animation: whiteFly 0.6s ease-out forwards;
+    box-shadow: 0 0 4px rgba(255,255,200,0.5);
   }
-  @keyframes splat {
-    0% { transform: scale(0); opacity: 0; }
-    30% { transform: scale(1.3); opacity: 1; }
-    60% { transform: scale(1.5); opacity: 0.8; }
-    100% { transform: scale(2); opacity: 0; }
+  @keyframes whiteFly {
+    0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
   }
-  @keyframes yolk {
-    0% { transform: scale(0); }
-    50% { transform: scale(1); }
-    100% { transform: scale(1.2); opacity: 0; }
-  }
-
-  /* 碎蛋壳溅射 */
-  .egg-shell {
+  /* 碎蛋壳 */
+  .egg-shell-shard {
     position: absolute;
-    width: 8px;
-    height: 6px;
-    background: rgba(220,200,170,0.8);
-    border-radius: 2px;
     pointer-events: none;
-    animation: shellFly 0.8s ease-out forwards;
+    z-index: 29;
+    width: 10px;
+    height: 7px;
+    background: linear-gradient(135deg, rgba(210,195,170,0.9), rgba(180,160,140,0.7));
+    border-radius: 2px;
+    animation: shellBurst 0.7s ease-out forwards;
   }
-  @keyframes shellFly {
-    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-    100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+  @keyframes shellBurst {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.3); opacity: 0; }
   }
 
   /* --- 带刺鞭打动画 --- */
-  .whip-slash {
+  /* 鞭子 */
+  .whip-cord {
     position: absolute;
     pointer-events: none;
-    animation: slash 0.6s ease-out forwards;
+    z-index: 30;
+    animation: whipSwing 0.5s cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
   }
-  .whip-slash svg { overflow: visible; }
-
-  @keyframes slash {
-    0% { transform: scale(0, 1); opacity: 0; }
-    20% { transform: scale(1.2, 1); opacity: 1; }
-    100% { transform: scale(1, 1); opacity: 0; }
+  @keyframes whipSwing {
+    0%   { transform: translate(260px, -120px) rotate(-50deg) scaleX(0.3); opacity: 0; }
+    20%  { transform: translate(140px, 30px) rotate(-20deg) scaleX(0.8); opacity: 1; }
+    45%  { transform: translate(40px, 120px) rotate(5deg) scaleX(1.1); opacity: 1; }
+    70%  { transform: translate(-40px, 180px) rotate(20deg) scaleX(0.8); opacity: 0.7; }
+    100% { transform: translate(-80px, 220px) rotate(35deg) scaleX(0.2); opacity: 0; }
   }
-
-  /* 鞭击裂痕 */
-  .whip-crack {
+  /* 血污飞溅 */
+  .blood-splat {
     position: absolute;
     pointer-events: none;
-    animation: crackAppear 0.8s ease-out forwards;
+    z-index: 28;
+    width: 20px;
+    height: 16px;
+    background: radial-gradient(ellipse, rgba(180, 10, 10, 0.9) 0%, rgba(140, 0, 0, 0.7) 40%, rgba(100, 0, 0, 0.2) 70%, transparent 100%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: bloodSplatter 0.7s ease-out forwards;
   }
-  .whip-crack svg { overflow: visible; }
-
-  @keyframes crackAppear {
-    0% { transform: scale(0); opacity: 0; }
-    30% { transform: scale(1.5); opacity: 0.9; }
-    60% { transform: scale(1); opacity: 0.7; }
-    100% { transform: scale(1.1); opacity: 0; }
+  @keyframes bloodSplatter {
+    0%   { transform: translate(0, 0) scale(0); opacity: 0; }
+    20%  { transform: translate(var(--dx2), var(--dy2)) scale(1.5); opacity: 1; }
+    100% { transform: translate(var(--dx3), var(--dy3)) scale(0.3); opacity: 0; }
   }
-
-  /* 荆棘刺点 */
-  .thorn-dot {
+  /* 血滴 */
+  .blood-drop {
     position: absolute;
-    width: 4px;
-    height: 4px;
+    pointer-events: none;
+    z-index: 28;
+    width: 6px;
+    height: 10px;
+    background: rgba(170, 10, 10, 0.9);
+    border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+    animation: bloodDrip 0.8s ease-in forwards;
+  }
+  @keyframes bloodDrip {
+    0%   { transform: translate(0, 0) scale(0); opacity: 0; }
+    30%  { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 1; }
+    60%  { transform: translate(var(--dx2), calc(var(--dy) + 40px)) scale(1.3); opacity: 0.9; }
+    100% { transform: translate(var(--dx2), calc(var(--dy) + 60px)) scale(0.8); opacity: 0; }
+  }
+  /* 血泊 */
+  .blood-pool {
+    position: absolute;
+    pointer-events: none;
+    z-index: 27;
+    width: 60px;
+    height: 40px;
+    background: radial-gradient(ellipse at center,
+      rgba(150, 5, 5, 0.8) 0%,
+      rgba(120, 0, 0, 0.5) 40%,
+      rgba(80, 0, 0, 0.15) 70%,
+      transparent 100%
+    );
     border-radius: 50%;
-    background: #8b0000;
-    box-shadow: 0 0 6px rgba(139,0,0,0.8);
-    pointer-events: none;
-    animation: thornBleed 0.6s ease-out forwards;
+    animation: bloodPool 1.2s ease-out forwards;
   }
-  @keyframes thornBleed {
-    0% { transform: scale(0); opacity: 0; }
-    40% { transform: scale(1.5); opacity: 1; }
-    100% { transform: scale(0.5); opacity: 0; }
+  @keyframes bloodPool {
+    0%   { transform: scale(0); opacity: 0; }
+    40%  { transform: scale(1.3); opacity: 0.9; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  /* 鞭痕 */
+  .whip-mark {
+    position: absolute;
+    pointer-events: none;
+    z-index: 29;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(200, 20, 20, 0.9), rgba(255, 40, 40, 0.6), rgba(139, 0, 0, 0.3), transparent);
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+    animation: whipMark 0.8s ease-out forwards;
+    transform-origin: left center;
+  }
+  @keyframes whipMark {
+    0%   { transform: scaleX(0); opacity: 1; }
+    20%  { transform: scaleX(1.1); opacity: 1; }
+    100% { transform: scaleX(1); opacity: 0; }
   }
 
   /* 屏幕颤抖 */
@@ -667,8 +744,12 @@
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div id="modalContent"></div>
     <div class="whipping-panel" id="whippingPanel">
-      <button class="whip-btn" data-tip="扔鸡蛋" onclick="whipIt('egg')" title="扔鸡蛋 🥚">🥚</button>
-      <button class="whip-btn" data-tip="带刺鞭打" onclick="whipIt('whip')" title="带刺鞭打 ⛓️">⚡</button>
+      <button class="whip-btn" data-tip="扔臭鸡蛋" onclick="whipIt('egg')" title="扔臭鸡蛋 🥚">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="13" rx="8" ry="10" stroke="#8b0000" stroke-width="1.5" fill="none"/><path d="M12 3 Q9 -2 14 -2 Q16 -2 12 3" stroke="#8b0000" stroke-width="1" fill="rgba(139,0,0,0.1)"/><line x1="8" y1="0" x2="10" y2="2" stroke="#5a8a1a" stroke-width="1.5" stroke-linecap="round"/><line x1="14" y1="0.5" x2="16" y2="2.5" stroke="#5a8a1a" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="whip-btn" data-tip="带刺鞭打" onclick="whipIt('whip')" title="带刺鞭打 ⛓️">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 3 Q10 10 16 4 L18 7 L10 14 L6 18 Q5 21 7 21 Q9 21 12 15 L18 9" stroke="#8b0000" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="5" r="1" fill="#8b0000"/><circle cx="8" cy="8" r="0.8" fill="#8b0000"/><circle cx="12" cy="10" r="0.8" fill="#8b0000"/><circle cx="6" cy="15" r="0.7" fill="#8b0000"/></svg>
+      </button>
     </div>
   </div>
 </div>
@@ -941,52 +1022,68 @@ function whipIt(type) {
 }
 
 function doEggWhip(canvas) {
-  // 获取弹窗尺寸
   const rect = canvas.getBoundingClientRect();
   const w = rect.width;
   const h = rect.height;
+  const hitX = w * 0.55; // 击中位置（偏右）
+  const hitY = h * 0.45;
 
-  // 连扔3个鸡蛋
+  // 连扔3个臭鸡蛋
   for (let i = 0; i < 3; i++) {
     setTimeout(() => {
-      // 鸡蛋飞行
       const egg = document.createElement('div');
-      egg.className = 'egg';
+      egg.className = 'rotten-egg';
       egg.textContent = '🥚';
-      egg.style.right = `${-10 + i * 20}px`;
-      egg.style.top = `${-20 + i * 30}px`;
+      egg.style.right = `${-60 + i * 15}px`;
+      egg.style.top = `${-60 + i * 25}px`;
       canvas.appendChild(egg);
 
-      // 蛋到达后溅开
+      // 臭气尾迹
+      const wisp = document.createElement('div');
+      wisp.className = 'stink-wisp';
+      wisp.style.left = `${hitX - 30 + i * 30}px`;
+      wisp.style.top = `${hitY - 20 + i * 20}px`;
+      canvas.appendChild(wisp);
+      setTimeout(() => wisp.remove(), 1300);
+
+      // 撞击效果
       setTimeout(() => {
         egg.remove();
-        const splatX = Math.random() * 0.6 + 0.2; // 相对位置
-        const splatY = Math.random() * 0.5 + 0.2;
 
-        const splat = document.createElement('div');
-        splat.className = 'egg-splat';
-        splat.style.left = `${splatX * 100}%`;
-        splat.style.top = `${splatY * 100}%`;
-        canvas.appendChild(splat);
+        // 蛋黄滩
+        const pool = document.createElement('div');
+        pool.className = 'yolk-pool';
+        pool.style.left = `${hitX - 50 + i * 20}px`;
+        pool.style.top = `${hitY - 30 + i * 10}px`;
+        canvas.appendChild(pool);
+        setTimeout(() => pool.remove(), 1600);
 
-        // 碎蛋壳溅射
-        for (let j = 0; j < 12; j++) {
-          const shell = document.createElement('div');
-          shell.className = 'egg-shell';
-          shell.style.left = `${splatX * 100}%`;
-          shell.style.top = `${splatY * 100}%`;
-          shell.style.setProperty('--dx', `${(Math.random() - 0.5) * 120}px`);
-          shell.style.setProperty('--dy', `${(Math.random() - 0.5) * 80}px`);
-          shell.style.setProperty('--rot', `${Math.random() * 720}deg`);
-          canvas.appendChild(shell);
+        // 蛋清飞溅
+        for (let j = 0; j < 10; j++) {
+          const drop = document.createElement('div');
+          drop.className = 'egg-white-drop';
+          drop.style.left = `${hitX + i * 15}px`;
+          drop.style.top = `${hitY}px`;
+          drop.style.setProperty('--dx', `${(Math.random() - 0.5) * 100}px`);
+          drop.style.setProperty('--dy', `${(Math.random() - 0.5) * 80}px`);
+          canvas.appendChild(drop);
+          setTimeout(() => drop.remove(), 700);
         }
 
-        setTimeout(() => {
-          splat.remove();
-          canvas.querySelectorAll('.egg-shell').forEach(e => e.remove());
-        }, 1200);
-      }, 700);
-    }, i * 250);
+        // 蛋壳碎片
+        for (let j = 0; j < 14; j++) {
+          const shard = document.createElement('div');
+          shard.className = 'egg-shell-shard';
+          shard.style.left = `${hitX + i * 10}px`;
+          shard.style.top = `${hitY - 5}px`;
+          shard.style.setProperty('--dx', `${(Math.random() - 0.5) * 130}px`);
+          shard.style.setProperty('--dy', `${(Math.random() - 0.5) * 100}px`);
+          shard.style.setProperty('--rot', `${Math.random() * 720}deg`);
+          canvas.appendChild(shard);
+          setTimeout(() => shard.remove(), 800);
+        }
+      }, 650);
+    }, i * 280);
   }
 }
 
@@ -994,79 +1091,90 @@ function doThornWhip(canvas) {
   const rect = canvas.getBoundingClientRect();
   const w = rect.width;
   const h = rect.height;
+  let gradId = 0;
 
-  // 荆棘刺点遍布
-  function spawnThorns() {
-    for (let i = 0; i < 15; i++) {
-      setTimeout(() => {
-        const dot = document.createElement('div');
-        dot.className = 'thorn-dot';
-        dot.style.left = `${Math.random() * 70 + 15}%`;
-        dot.style.top = `${Math.random() * 60 + 20}%`;
-        canvas.appendChild(dot);
-        setTimeout(() => dot.remove(), 700);
-      }, Math.random() * 200);
-    }
-  }
-
-  // 多道鞭痕
+  // 多鞭连打
   for (let i = 0; i < 5; i++) {
     setTimeout(() => {
-      const slashX = Math.random() * 40 + 10;
-      const slashY = Math.random() * 30 + 15;
+      gradId++;
+      // 鞭子扫过
+      const cord = document.createElement('div');
+      cord.className = 'whip-cord';
+      cord.innerHTML = `<svg width="280" height="40" viewBox="0 0 280 40">
+        <defs>
+          <linearGradient id="wh${gradId}">
+            <stop offset="0%" stop-color="#4a1a1a"/>
+            <stop offset="50%" stop-color="#8b2020"/>
+            <stop offset="100%" stop-color="#3a0a0a"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,20 Q60,0 120,15 Q180,30 240,5 Q260,2 280,8"
+          stroke="url(#wh${gradId})" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M0,20 Q60,0 120,15 Q180,30 240,5 Q260,2 280,8"
+          stroke="#a00000" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-dasharray="2,4"/>
+        <!-- 刺点 -->
+        <circle cx="50" cy="10" r="2" fill="#8b0000"/>
+        <circle cx="100" cy="10" r="2" fill="#8b0000"/>
+        <circle cx="140" cy="18" r="2" fill="#8b0000"/>
+        <circle cx="180" cy="25" r="2" fill="#8b0000"/>
+        <circle cx="210" cy="14" r="2" fill="#8b0000"/>
+        <circle cx="250" cy="5" r="2" fill="#8b0000"/>
+      </svg>`;
+      cord.style.right = '0px';
+      cord.style.top = '0px';
+      canvas.appendChild(cord);
+      setTimeout(() => cord.remove(), 600);
 
-      const slash = document.createElement('div');
-      slash.className = 'whip-slash';
-      slash.style.left = `${slashX}%`;
-      slash.style.top = `${slashY}%`;
-      slash.innerHTML = generateSlashSVG(Math.random() < 0.5);
-      canvas.appendChild(slash);
+      // 鞭痕
+      const markX = 80 + i * 35;
+      const markY = 50 + i * 30;
+      const mark = document.createElement('div');
+      mark.className = 'whip-mark';
+      mark.style.left = `${markX}px`;
+      mark.style.top = `${markY}px`;
+      mark.style.width = `${120 + Math.random() * 60}px`;
+      mark.style.transform = `rotate(${-10 + i * 8}deg)`;
+      canvas.appendChild(mark);
+      setTimeout(() => mark.remove(), 900);
 
-      // 裂痕
-      const crack = document.createElement('div');
-      crack.className = 'whip-crack';
-      crack.style.left = `${slashX + (Math.random() - 0.5) * 20}%`;
-      crack.style.top = `${slashY + (Math.random() - 0.5) * 15}%`;
-      crack.innerHTML = generateCrackSVG();
-      canvas.appendChild(crack);
+      // 血污飞溅
+      for (let j = 0; j < 8; j++) {
+        const splat = document.createElement('div');
+        splat.className = 'blood-splat';
+        splat.style.left = `${markX + 60}px`;
+        splat.style.top = `${markY}px`;
+        const ang = Math.random() * Math.PI * 2;
+        const dist = 30 + Math.random() * 80;
+        splat.style.setProperty('--dx2', `${Math.cos(ang) * dist}px`);
+        splat.style.setProperty('--dy2', `${Math.sin(ang) * dist - 20}px`);
+        splat.style.setProperty('--dx3', `${Math.cos(ang) * dist * 1.5}px`);
+        splat.style.setProperty('--dy3', `${Math.sin(ang) * dist * 1.5 + 20}px`);
+        canvas.appendChild(splat);
+        setTimeout(() => splat.remove(), 800);
+      }
 
-      spawnThorns();
+      // 血滴
+      for (let j = 0; j < 6; j++) {
+        const drop = document.createElement('div');
+        drop.className = 'blood-drop';
+        drop.style.left = `${markX + 50 + Math.random() * 60}px`;
+        drop.style.top = `${markY - 10}px`;
+        drop.style.setProperty('--dx', `${(Math.random() - 0.5) * 50}px`);
+        drop.style.setProperty('--dy', `${(Math.random() - 0.5) * 20}px`);
+        drop.style.setProperty('--dx2', `${(Math.random() - 0.5) * 80}px`);
+        canvas.appendChild(drop);
+        setTimeout(() => drop.remove(), 900);
+      }
 
-      setTimeout(() => {
-        slash.remove();
-        crack.remove();
-      }, 800);
-    }, i * 300);
+      // 血泊
+      const pool = document.createElement('div');
+      pool.className = 'blood-pool';
+      pool.style.left = `${markX + 20}px`;
+      pool.style.top = `${markY + 15}px`;
+      canvas.appendChild(pool);
+      setTimeout(() => pool.remove(), 1300);
+    }, i * 350);
   }
-}
-
-let _svgId = 0;
-function generateSlashSVG(flipped) {
-  _svgId++;
-  const id = 'sg' + _svgId;
-  const d = flipped
-    ? 'M10,5 Q50,2 95,15 Q60,8 20,12 Z'
-    : 'M95,5 Q50,2 10,15 Q50,8 85,12 Z';
-  return `<svg width="120" height="25" viewBox="0 0 105 22">
-    <defs>
-      <linearGradient id="${id}">
-        <stop offset="0%" stop-color="#ff3333" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#ff1111" stop-opacity="0.8"/>
-        <stop offset="100%" stop-color="#8b0000" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <path d="${d}" fill="url(#${id})" stroke="#cc0000" stroke-width="1.5" stroke-opacity="0.6">
-      <animate attributeName="stroke-opacity" values="0.6;0;0.6;0" dur="0.6s" repeatCount="1"/>
-    </path>
-  </svg>`;
-}
-
-function generateCrackSVG() {
-  return `<svg width="60" height="50" viewBox="0 0 60 50">
-    <path d="M30,0 L25,15 L35,12 L28,28 L38,22 L20,45 M40,5 L36,18 M12,10 L18,22" stroke="#8b0000" stroke-width="1.2" fill="none" stroke-opacity="0.7" stroke-linecap="round">
-      <animate attributeName="stroke-opacity" values="0.7;0;0.7;0" dur="0.8s" repeatCount="1"/>
-    </path>
-  </svg>`;
 }
 
 // ===== 搜索监听 =====
